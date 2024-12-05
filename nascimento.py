@@ -1,4 +1,7 @@
+from flask import Flask, request, jsonify
 from datetime import datetime
+
+app = Flask(__name__)
 
 
 def formatar_data(data_nascimento):
@@ -45,6 +48,21 @@ def formatar_data(data_nascimento):
                     return "Formato de data inválido"
 
 
-# Exemplo de uso
-data_nascimento = input("Digite a data de nascimento: ")
-print("Data formatada:", formatar_data(data_nascimento))
+@app.route('/webhook', methods=['POST'])
+def webhook():
+    # Recebe a data de nascimento do corpo da requisição
+    data = request.json
+
+    # Verifica se a chave 'data_nascimento' está presente
+    if 'data_nascimento' in data:
+        data_nascimento = data['data_nascimento']
+        # Formata a data
+        data_formatada = formatar_data(data_nascimento)
+        # Retorna a resposta no formato esperado pelo BotConversa
+        return jsonify({'data_formatada': data_formatada})
+    else:
+        return jsonify({'error': 'Data de nascimento não fornecida'}), 400
+
+
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0', port=5003)  # Porta 5003
