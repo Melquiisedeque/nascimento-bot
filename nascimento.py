@@ -8,6 +8,15 @@ def formatar_data(data_nascimento):
     # Remover espaços e verificar se a data tem o tamanho correto
     data_nascimento = data_nascimento.replace(" ", "")
 
+    # Verificar se a data tem o formato ISO 8601 (1995-09-29T00:00:00.000Z)
+    try:
+        if 'T' in data_nascimento and 'Z' in data_nascimento:
+            # Formato: 1995-09-29T00:00:00.000Z
+            data_formatada = datetime.strptime(data_nascimento, "%Y-%m-%dT%H:%M:%S.%fZ")
+            return data_formatada.strftime("%Y-%m-%d")
+    except ValueError:
+        pass
+
     # Verificar se a data tem 8 caracteres ou 7 caracteres (sem separadores)
     if len(data_nascimento) == 8 and data_nascimento.isdigit():
         try:
